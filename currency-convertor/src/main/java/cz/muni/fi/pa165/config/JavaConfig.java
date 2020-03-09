@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
-@ComponentScan(basePackages = {"cz.muni.fi.pa165.currency"})
+@ComponentScan(basePackages = {"cz.muni.fi.pa165.currency", "cz.muni.fi.pa165.aspects"})
 @EnableAspectJAutoProxy
 public class JavaConfig {
 

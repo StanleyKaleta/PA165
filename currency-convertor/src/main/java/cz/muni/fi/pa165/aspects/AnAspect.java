@@ -1,4 +1,4 @@
-package cz.muni.fi.pa165.currency;
+package cz.muni.fi.pa165.aspects;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -20,23 +20,13 @@ public class AnAspect {
     @Around("execution(public * *(..))")
     public Object logMethodCall(ProceedingJoinPoint joinPoint) throws Throwable {
 
-
-        long start = Calendar.getInstance().getTimeInMillis();
-        System.err.println("Calling method: " + joinPoint.getSignature() + " @ " + Arrays.toString(joinPoint.getArgs()) + " @ " + start);
-
-
-
-
+        long start = System.nanoTime();
         Object result = joinPoint.proceed();
+        long end = System.nanoTime();
 
-
-        long end = Calendar.getInstance().getTimeInMillis();
+        System.err.println("Calling method: " + joinPoint.getSignature() + " @ " + Arrays.toString(joinPoint.getArgs()) + " @ " + start);
         System.err.println("Method finished: " + joinPoint.getSignature() + " @ " + end);
-
-
-        System.err.println("Length: " + joinPoint.getSignature() + " = " + (end - start) + "ms");
-
-
+        System.err.println("Length: " + joinPoint.getSignature() + " = " + (end - start) + " nanoseconds");
 
         return result;
     }
