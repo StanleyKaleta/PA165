@@ -7,21 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import cz.fi.muni.pa165.dto.Color;
@@ -34,14 +20,17 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+
+
+	@ManyToMany(mappedBy = "products")
+	private Set<Category> categories = new HashSet<>();
 
 	@Lob
 	private byte[] image;
 
 	private String imageMimeType;
-	
 
+	@NotNull
 	private String name;
 	
 	/*
@@ -68,30 +57,18 @@ public class Product {
 	}
 
 
+	public void removeCategory(Category category)	{
+		this.categories.remove(category);
+	}
 
-	/**
-	 * TODO these two methods are here just to make Task04 compilable. After you are finished
-	 * with TASK 02 you should delete this empty method
-	 * @param kitchen
-	 */
-	public void addCategory(Category kitchen) {	
+	public void addCategory(Category c) {
+		categories.add(c);
+		c.addProduct(this);
 	}
-	public List<Product> getCategories() {
-		return null;
+
+	public Set<Category> getCategories() {
+		return Collections.unmodifiableSet(categories);
 	}
-	//TODO after you are done with task02 you can uncomment this methods
-//	public void removeCategory(Category category)	{
-//		this.categories.remove(category);
-//	}
-//	
-//	public void addCategory(Category c) {
-//		categories.add(c);
-//		c.addProduct(this);
-//	}
-//
-//	public Set<Category> getCategories() {
-//		return Collections.unmodifiableSet(categories);
-//	}
 
 
 	public LocalDate getAddedDate() {
