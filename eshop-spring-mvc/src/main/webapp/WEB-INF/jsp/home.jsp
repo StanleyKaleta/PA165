@@ -16,6 +16,11 @@
         <p><a class="btn btn-lg btn-success" href="${pageContext.request.contextPath}/shopping/show"
               role="button">Go shopping</a></p>
     </div>
+    <c:forEach begin="1" end="12" var="i">
+        <div class="col-xs-12 col-sm-6 col-md-2 col-lg-1"><!-- bootstrap responsive grid -->
+            <button>button${i}</button>
+        </div>
+    </c:forEach>
 
 </jsp:attribute>
 </my:pagetemplate>
