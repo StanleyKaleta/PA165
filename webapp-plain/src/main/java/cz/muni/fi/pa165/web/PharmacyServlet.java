@@ -43,9 +43,9 @@ public class PharmacyServlet extends HttpServlet {
         //add the entered data to a list held in a servlet context attribute
         ArrayList<Drug> drugs = (ArrayList<Drug>) getServletContext().getAttribute("drugs");
 
-        if (!name.matches(".*[%<>&;'\0-].*") &&
+        if (true/*!name.matches(".*[%<>&;'\0-].*") &&
                 !amount.matches(".*[%<>&;'\0-].*") &&
-                !vendor.matches(".*[%<>&;'\0-].*")) {
+                !vendor.matches(".*[%<>&;'\0-].*")*/) {
             drugs.add(new Drug(name,amount, vendor));
         } else {
             // throw error
