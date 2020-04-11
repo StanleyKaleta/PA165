@@ -30,6 +30,12 @@
     </c:if>
     <jsp:invoke fragment="body"/>
 </div>
+
+<footer>
+    <p>&copy; Masaryk University ${year}</p>
+</footer>
+
 </body>
+
 </html>
 
