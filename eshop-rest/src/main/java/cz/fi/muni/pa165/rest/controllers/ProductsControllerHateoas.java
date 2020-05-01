@@ -8,8 +8,12 @@ import cz.fi.muni.pa165.rest.assemblers.ProductResourceAssembler;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
+
+import cz.fi.muni.pa165.rest.exceptions.ResourceNotModifiedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -22,7 +26,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.reactive.WebFluxLinkBuilder.linkTo;
+
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * REST HATEOAS Controller for Products
@@ -52,7 +59,7 @@ public class ProductsControllerHateoas {
      */
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public final HttpEntity<Resources<Resource<ProductDTO>>> getProducts() {
-        
+
         logger.debug("rest getProducts({}) hateoas");
 
         Collection<ProductDTO> productsDTO = productFacade.getAllProducts();
@@ -67,6 +74,32 @@ public class ProductsControllerHateoas {
 
         return new ResponseEntity<Resources<Resource<ProductDTO>>>(productsResources, HttpStatus.OK);
 
+    }
+
+    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public final HttpEntity<CollectionModel<EntityModel<ProductDTO>>> getProductsCached(WebRequest webRequest) {
+
+        logger.debug("rest getProducts({}) hateoas cached version");
+
+        final Collection<ProductDTO> productsDTO = productFacade.getAllProducts();
+        final Collection<EntityModel<ProductDTO>> productResourceCollection = new ArrayList<>();
+
+        for (ProductDTO p : productsDTO) {
+            productResourceCollection.add(productResourceAssembler.toModel(p));
+        }
+
+        CollectionModel<EntityModel<ProductDTO>> productsResources = new CollectionModel<>(productResourceCollection);
+        productsResources.add(linkTo(ProductsControllerHateoas.class).withSelfRel());
+
+        final StringBuffer eTag = new StringBuffer("\"");
+        eTag.append(Integer.toString(productsResources.hashCode()));
+        eTag.append('\"');
+
+        if (webRequest.checkNotModified(eTag.toString())){
+            throw new ResourceNotModifiedException();
+        }
+
+        return ResponseEntity.ok().eTag(eTag.toString()).body(productsResources);
     }
 
     /**
