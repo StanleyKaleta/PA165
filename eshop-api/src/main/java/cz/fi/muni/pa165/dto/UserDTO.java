@@ -1,5 +1,8 @@
 package cz.fi.muni.pa165.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class UserDTO
@@ -32,10 +35,12 @@ public class UserDTO
         this.id = id;
     }
 
+    @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;
     }
 
+    @JsonProperty
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
